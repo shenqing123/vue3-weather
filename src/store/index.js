@@ -1,9 +1,12 @@
 import { defineStore } from "pinia";
+import {getCityWeather} from '../api/index'
 export const useWeatherStore = defineStore('weather', ()=>{
     // state
     let isSearch = ref(false)
     
     let savedCities = ref(JSON.parse(localStorage.getItem('savedCities')) || [])
+    let casts = ref([])
+    let localCityAdcode = ref('')
     // action, 异步的同样写法
     function showSearchBox() {
         isSearch.value = true  
@@ -23,7 +26,21 @@ export const useWeatherStore = defineStore('weather', ()=>{
     function saveCities () {
         localStorage.setItem('savedCities', JSON.stringify(savedCities.value))
     }
-    
+    function setLocalAdcode (adcode) {
+        localCityAdcode.value = adcode
+    }
+    async function setCasts (adcode) {
+        console.log('cast');
+        try{
+            const res = await getCityWeather(adcode, 'all')
+            if (res.status === '1') {
+                casts.value = res.forecasts[0].casts
+            }
+        } catch {
+            return Promise.reject('error')
+        }
+        
+    }
     return {
         isSearch,
         showSearchBox,
@@ -31,6 +48,10 @@ export const useWeatherStore = defineStore('weather', ()=>{
         savedCities,
         addCity,
         deleteCity,
-        saveCities
+        saveCities,
+        localCityAdcode,
+        setLocalAdcode,
+        casts,
+        setCasts
     }
 })

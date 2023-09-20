@@ -16,7 +16,7 @@
                 <span @click="open">
                     <i class="fa-solid fa-circle-info cursor-pointer hover:text-dark-blue text-xl duration-1000"></i>
                 </span>
-                <span v-show="isShowPlus" @click="addCity(adcode)">
+                <span v-show="props.isShowPlus" @click="$emit('addCity', adcode)">
                     <i class="fa-solid fa-plus cursor-pointer hover:text-dark-blue text-xl duration-1000"></i>
                 </span>
             </div>
@@ -44,14 +44,11 @@
 </template>
 
 <script setup>
-import {getLocalCity, getCityWeather} from '../../api/index'
 import { useWeatherStore } from '../../store';
-const route = useRoute()
-const {city, adcode} = await getLocalCity()
-const res = await getCityWeather(adcode, 'base')
-const {temperature, weather, windpower, winddirection} = res.lives[0]
+
+const props = defineProps(['res', 'isShowPlus'])
+const {city, temperature, weather, windpower, winddirection} = props.res.lives[0]
 let show = ref(false)
-let isShowPlus = ref(false)
 const store = useWeatherStore()
 function open () {
     show.value = true
@@ -59,24 +56,9 @@ function open () {
 function close () {
     show.value = false
 }
-function checkIfShowPlus () {
-    const adcode = route.query.adcode
-    const haveCity = store.savedCities.includes(adcode)
-    if (adcode && !haveCity) {
-        isShowPlus.value = true
-    }else{
-        isShowPlus.value = false
-    }
-}
-checkIfShowPlus()
-function addCity () {
-    const adcode = route.query.adcode
-    store.addCity(adcode)
-    isShowPlus.value = false
-}
-watch(route, ()=>{
-    checkIfShowPlus()
-})
+
+
+
 </script>
 
 <style lang="scss" scoped>

@@ -8,12 +8,17 @@
             <div>当日风力是：{{ windpower }}级</div>
         </div>
         <hr class="mt-6 border-white border-opacity-10">
+        <div class="container">
+            <WeatherBox></WeatherBox>
+        </div>
+        
     </div>
 </template>
 
 <script setup>
 import { useWeatherStore } from '../../store';
 import { getCityWeather } from '../../api';
+import WeatherBox from '../../components/WeatherBox/index.vue'
 const store = useWeatherStore()
 const route = useRoute()
 const {city, adcode} = route.query

@@ -2,7 +2,7 @@
     <div class="flex flex-col gap-4 mt-4 container ">
         <Search @search="search" :cityList="cityList"></Search>
         <Suspense>
-            <List :list="savedCities"></List>
+            <List></List>
             <template #fallback>
                 loading ...
             </template>
@@ -16,7 +16,9 @@ import List from '../../components/List/index.vue'
 import Search from '../../components/search/index.vue'
 import WeatherBox from '../../components/WeatherBox/index.vue'
 import { getCityAdcode } from '../../api';
+import { useWeatherStore } from '../../store';
 const cityList = ref([])
+const store = useWeatherStore()
 async function search (searchKey) {
     let list = []
     try {
@@ -43,7 +45,9 @@ async function search (searchKey) {
         cityList.value = [{city: '网络异常，请稍后再试'}]
     }
 }
-const savedCities = JSON.parse(localStorage.getItem('savedCities')) || []
+
+
+
 
 </script>
 

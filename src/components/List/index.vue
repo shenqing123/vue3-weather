@@ -19,6 +19,7 @@
 import { useWeatherStore } from '../../store';
 import { getCityWeather } from '../../api';
 const props = defineProps(['list'])
+const adcodeList = JSON.parse(localStorage.getItem('savedCities')) || []
 const store = useWeatherStore()
 const router = useRouter()
 let cityList = ref([])
@@ -29,8 +30,8 @@ const show = computed(()=>{
 
 async function getTemperatures () {
     let list = []
-    if(props.list.length === 0) return
-    props.list.map(item => {
+    if(adcodeList.length === 0) return
+    adcodeList.map(item => {
         let itemFunc = null
         itemFunc = getCityWeather(item, 'base')
         list.push(itemFunc)

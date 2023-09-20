@@ -1,18 +1,11 @@
 <template>
-  <div class="flex flex-col bg-main-blue min-h-screen">
-    <Suspense>
-      <Header></Header>
-    </Suspense>
-    <div class="text-white">
-      <Suspense>
-        <router-view></router-view>
-      </Suspense>
-    </div>
-  </div>
+  <Suspense>
+    <Weather></Weather>
+  </Suspense>
 </template>
 
 <script setup>
-import Header from '../src/components/Header/index.vue'
+import Weather from './views/weather/index.vue'
 </script>
 
 <style scoped>
