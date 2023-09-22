@@ -1,5 +1,5 @@
 <template>
-    <header class="sticky shadow-lg top-0 z-10">
+    <header class="sticky shadow-lg top-0 z-10 bg-main-blue">
         <nav class="container flex flex-col sm:flex-row items-center gap-4 text-white py-6">
             <RouterLink to="/">
                 <div class="flex items-center gap-3">
@@ -16,7 +16,7 @@
                 <span @click="open">
                     <i class="fa-solid fa-circle-info cursor-pointer hover:text-dark-blue text-xl duration-1000"></i>
                 </span>
-                <span v-show="props.isShowPlus" @click="$emit('addCity', adcode)">
+                <span v-show="store.isShowPlus" @click="addCity(adcode)">
                     <i class="fa-solid fa-plus cursor-pointer hover:text-dark-blue text-xl duration-1000"></i>
                 </span>
             </div>
@@ -44,10 +44,8 @@
 </template>
 
 <script setup>
-import { useWeatherStore } from '../../store';
+import { useWeatherStore } from '../../store/index';
 
-const props = defineProps(['res', 'isShowPlus'])
-const {city, temperature, weather, windpower, winddirection} = props.res.lives[0]
 let show = ref(false)
 const store = useWeatherStore()
 function open () {
@@ -56,7 +54,38 @@ function open () {
 function close () {
     show.value = false
 }
+import {getLocalCity, getCityWeather} from '../../api/index'
+const route = useRoute()
 
+const { adcode} = await getLocalCity()
+const res = await getCityWeather(adcode, 'base')
+const {city, temperature, weather, windpower, winddirection} = res.lives[0]
+
+
+store.setLocalAdcode(adcode)
+function addCity () {
+    const adcode = route.query.adcode
+    store.addCity(adcode)
+    store.setShowPlus(false)
+}
+function checkRoute (route) {
+    let code = adcode
+    store.setShowPlus(false)
+    // 详情页
+    if (route.query.adcode) {
+        code = route.query.adcode
+        const haveCity = store.savedCities.includes(code)
+        // 展示加号
+        if (!haveCity) store.setShowPlus(true)
+    } 
+    // 获取4天天气预报
+    store.setCasts(code)
+}
+checkRoute(route)
+watch(route,  (newval)=>{
+    // 根据路由不同获取不同的天气预报和判断是否展示加号
+   checkRoute(newval)
+})
 
 
 </script>

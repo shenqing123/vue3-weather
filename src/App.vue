@@ -1,7 +1,5 @@
 <template>
-  <Suspense>
     <Weather></Weather>
-  </Suspense>
 </template>
 
 <script setup>

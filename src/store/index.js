@@ -3,11 +3,14 @@ import {getCityWeather} from '../api/index'
 export const useWeatherStore = defineStore('weather', ()=>{
     // state
     let isSearch = ref(false)
-    
+    let isShowPlus = ref(false)
     let savedCities = ref(JSON.parse(localStorage.getItem('savedCities')) || [])
     let casts = ref([])
     let localCityAdcode = ref('')
     // action, 异步的同样写法
+    function setShowPlus (flag) {
+        isShowPlus.value = flag
+    }
     function showSearchBox() {
         isSearch.value = true  
     }
@@ -30,14 +33,13 @@ export const useWeatherStore = defineStore('weather', ()=>{
         localCityAdcode.value = adcode
     }
     async function setCasts (adcode) {
-        console.log('cast');
         try{
             const res = await getCityWeather(adcode, 'all')
             if (res.status === '1') {
                 casts.value = res.forecasts[0].casts
             }
-        } catch {
-            return Promise.reject('error')
+        } catch (error){
+            throw error
         }
         
     }
@@ -52,6 +54,8 @@ export const useWeatherStore = defineStore('weather', ()=>{
         localCityAdcode,
         setLocalAdcode,
         casts,
-        setCasts
+        setCasts,
+        isShowPlus,
+        setShowPlus
     }
 })

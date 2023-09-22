@@ -33,13 +33,14 @@ function renderOption (dayData, nightData) {
     option.value = {
         grid: {
             top: 25,
-            left: 0,
-            right: 0,
+            left: 30,
+            right: 30,
             bottom: 0
         },
         xAxis: {
             type: 'category',
-            show: false
+            show: false,
+            boundaryGap: false
         },
         yAxis: {
             type: 'value',
@@ -51,8 +52,7 @@ function renderOption (dayData, nightData) {
             label: {
                 show: true,
                 formatter: '白{c} ℃',
-                textColor: '#fff',
-                textBorder: 'transparent'
+                color: '#fff'
             },
             data:  dayData
         },{
@@ -62,8 +62,7 @@ function renderOption (dayData, nightData) {
                 position: 'bottom',
                 show: true,
                 formatter: '晚{c} ℃',
-                textColor: '#fff',
-                textBorder: 'transparent'
+                color: '#fff'
             },
             data: nightData
         }]
