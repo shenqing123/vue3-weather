@@ -1,17 +1,20 @@
 <template>
-    <div v-if="show">
-        <TransitionGroup name="list">
-            <div v-for="item,index in cityList" :key="item" class="flex cursor-pointer mb-4" @mouseleave="item.showBtns=false" @mouseenter="item.showBtns = true">
-                <div class="flex-1 flex justify-between bg-dark-blue p-2 duration-300 transition-all">
-                    <div>{{ item.city }}</div>
-                    <div>{{ item.temperature }}度</div>
+    <div v-if="show" class="max-h-[300px] overflow-y-scroll scrollbar-thin hover:scrollbar-thumb-blue-300">
+        <h2 v-if="cityList.length === 0" class="text-center">暂时没有保存过天气信息，请查询后点击右上角"＋"号保存</h2>
+        <template v-else>
+            <TransitionGroup name="list">
+                <div v-for="item,index in cityList" :key="item" class="flex cursor-pointer mb-4" @mouseleave="item.showBtns=false" @mouseenter="item.showBtns = true">
+                    <div class="flex justify-between bg-dark-blue p-2 duration-300 transition-all w-full" :class="{'w-4/5':item.showBtns === true}">
+                        <div>{{ item.city }}</div>
+                        <div>{{ item.temperature }}度</div>
+                    </div>
+                    <div v-show="item.showBtns" class="flex gap-4">
+                        <button @click="toDetail(item)" class="bg-yellow-500 w-[80px]">查看</button>
+                        <button @click="deleteCity(item, index)" class="bg-yellow-500 w-[80px]">删除</button>
+                    </div>
                 </div>
-                <div v-show="item.showBtns" class="flex gap-4">
-                    <button @click="toDetail(item)" class="bg-yellow-500 w-[80px]">查看</button>
-                    <button @click="deleteCity(item, index)" class="bg-yellow-500 w-[80px]">删除</button>
-                </div>
-            </div>
-        </TransitionGroup>
+            </TransitionGroup>
+        </template>
     </div>
 </template>
 
@@ -25,7 +28,7 @@ const router = useRouter()
 let cityList = ref([])
 await getTemperatures()
 const show = computed(()=>{
-    return cityList.value.length > 0 && !store.isSearch
+    return !store.isSearch
 })
 
 async function getTemperatures () {
@@ -37,19 +40,17 @@ async function getTemperatures () {
         list.push(itemFunc)
     })
     
-    Promise.all(list).then(res=>{
-        let item = {}
-        cityList.value = []
-        res.map(item => {
-            const city = item.lives[0]
-            const obj = {
-                city: city.city,
-                adcode: city.adcode,
-                temperature: city.temperature,
-                showBtns: false
-            }
-            cityList.value.push(obj)
-        })
+    const res = await Promise.all(list)
+    cityList.value = []
+    res?.map(item => {
+        const city = item.lives[0]
+        const obj = {
+            city: city.city,
+            adcode: city.adcode,
+            temperature: city.temperature,
+            showBtns: false
+        }
+        cityList.value.push(obj)
     })
 }
 

@@ -71,7 +71,6 @@ function renderOption (dayData, nightData) {
 function init () {
     let dayData = []
     let nightData = []
-    console.log('322', store.casts);
     store.casts.map(item => {
         dayData.push(item.daytemp)
         nightData.push(item.nighttemp)
